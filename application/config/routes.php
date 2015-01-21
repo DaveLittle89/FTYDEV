@@ -38,8 +38,14 @@
 |
 */
 
-$route['default_controller'] = "welcome";
-$route['404_override'] = '';
+$route['default_controller'] = "Package";
+$route['404_override'] = 'Package/index';
+
+
+$route['package/([a-z])'] = 'Package/$1';
+$route['partners/([a-z])'] = 'Affiliates/$1';
+$route['admin/([a-z])'] = 'Admin/$1';
+
 
 
 /* End of file routes.php */
