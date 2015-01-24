@@ -8,6 +8,11 @@ class Admin extends CI_Controller {
 		
 		// Load Admin Function Model
 		$this->load->model('Admins');
+		
+		//Authenticate
+		if (!$this->ion_auth->is_admin()){
+			redirect('Package/login');
+		}
 	}
 	
 	public function index()
