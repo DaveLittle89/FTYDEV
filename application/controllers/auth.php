@@ -1,4 +1,5 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Auth extends CI_Controller {
 
@@ -63,6 +64,16 @@ class Auth extends CI_Controller {
 			{
 				//if the login is successful
 				//redirect them back to the home page
+				$user_groups = $this->ion_auth->get_users_groups()->row()->id;
+				
+				if($user_groups == 1 || $user_groups == 2){
+					redirect ('admin/index');
+				}else if($user_groups == 3 ){
+					redirect ('agents/index');
+				}else{
+					redirect('package/index');
+				}
+				
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				redirect('/', 'refresh');
 			}
@@ -84,10 +95,14 @@ class Auth extends CI_Controller {
 				'id' => 'identity',
 				'type' => 'text',
 				'value' => $this->form_validation->set_value('identity'),
+				'class' => 'form-control',
+				'placeholder' => 'Email'
 			);
 			$this->data['password'] = array('name' => 'password',
 				'id' => 'password',
 				'type' => 'password',
+				'class' => 'form-control',
+				'placeholder' => 'Password'
 			);
 
 			$this->_render_page('auth/login', $this->data);
@@ -447,7 +462,8 @@ class Auth extends CI_Controller {
 				'phone'      => $this->input->post('phone'),
 			);
 		}
-		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data))
+		
+		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, array('1')))
 		{
 			//check to see if we are creating the user
 			//redirect them back to the admin page
@@ -796,7 +812,11 @@ class Auth extends CI_Controller {
 
 		$this->viewdata = (empty($data)) ? $this->data: $data;
 
-		$view_html = $this->load->view($view, $this->viewdata, $render);
+		$view_html = $this->load->view('header');
+		
+		$view_html .= $this->load->view($view, $this->viewdata, $render);
+		
+		$view_html .= $this->load->view('footer');
 
 		if (!$render) return $view_html;
 	}

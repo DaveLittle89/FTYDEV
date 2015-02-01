@@ -43,10 +43,12 @@ $route['404_override'] = 'Package/index';
 
 
 $route['package/([a-z])'] = 'Package/$1';
+$route['auth/([a-z])'] = 'Auth/$1';
 $route['partners/([a-z])'] = 'Affiliates/$1';
 $route['admin/([a-z])'] = 'Admin/$1';
-
+$route['welcome'] = "Welcome";
 
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
+

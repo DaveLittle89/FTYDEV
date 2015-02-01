@@ -65,7 +65,7 @@
 	</style>
 </head>
 <body>
-
+<?php print_r($user); ?>
 <div id="container">
 	<h1>Welcome to CodeIgniter!</h1>
 
@@ -84,5 +84,8 @@
 	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
 </div>
 
+<?php echo form_open('new_controller/displayoutput'); ?>
+<?php echo form_submit('mysubmit', 'Submit Post!'); ?>
+<?php echo form_close(); ?>
 </body>
 </html>
