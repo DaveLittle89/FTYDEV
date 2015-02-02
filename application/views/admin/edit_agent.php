@@ -1,9 +1,9 @@
 <h1>Edit Agent</h1>
 
-<div id="infoMessage"><?php echo $message;?></div>
+<?php if(isset($message)){ ?><div id="infoMessage"><?php echo $message;?></div><?php } ?>
 
 
-<?php echo form_open("admin/edit_user", array('class' => 'form-horizontal'));?>
+<?php echo form_open("admin/edit_agent/".$user->id, array('class' => 'form-horizontal'));?>
   <div class="form-group">
     <label for="identity" class="col-sm-2 control-label">Email</label>
     <div class="col-sm-10">
@@ -73,19 +73,24 @@
   <div class="form-group">
     <label for="country" class="col-sm-2 control-label">Country</label>
     <div class="col-sm-10">
-      <?php echo form_input($country); ?>
-  </div>  
-<div class="form-group">
+      <?php echo country_dropdown('country', 'country', 'form-control', $country, array('GB', 'IR', 'FR', 'DE', 'IT'), ''); ?>
+  	</div>  
+  </div>
+  <div class="form-group">
     <label for="notes" class="col-sm-2 control-label">Notes</label>
     <div class="col-sm-10">
       <?php echo form_textarea($notes);?>
     </div>
   </div>  
-
+  <div class="form-group">
+    <label for="cookie_length" class="col-sm-2 control-label">Cookie Length</label>
+    <div class="col-sm-10">
+      <?php echo form_input($cookie_length);?>
+    </div>
+  </div>  
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
     	<?php echo form_submit('submit', 'Save', 'class="btn btn-default"');?>
     </div>
   </div>
-<?php echo form_hidden($csrf); ?>
 <?php echo form_close();?>

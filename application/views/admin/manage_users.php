@@ -22,8 +22,8 @@
  				<td><?php echo $r['first_name']; ?></td>
  				<td><?php echo $r['last_name']; ?></td>
  				<td><?php echo $r['email']; ?></td>
- 				<td><a href="/book/index.php/admin/edit_user/<?php echo $r['id']; ?>">edit</a></td>
- 				<td><a href="/book/index.php/admin/delete_user/<?php echo $r['id']; ?>">edit</a></td>
+ 				<td><a href="/book/index.php/admin/edit_user/<?php echo $r['id']; ?>">Edit</a></td>
+ 				<td><a href="/book/index.php/admin/remove_user/<?php echo $r['id']; ?>">Delete</a></td>
  			</tr>
  			<?php
  		}
@@ -51,8 +51,8 @@
  				<td><?php echo $r['first_name']; ?></td>
  				<td><?php echo $r['last_name']; ?></td>
  				<td><?php echo $r['email']; ?></td>
- 				<td><a href="/book/index.php/admin/edit_user/<?php echo $r['id']; ?>">edit</a></td>
- 				<td><a href="/book/index.php/admin/delete_user/<?php echo $r['id']; ?>">edit</a></td>
+ 				<td><a href="/book/index.php/admin/edit_user/<?php echo $r['id']; ?>">Edit</a></td>
+ 				<td><a href="/book/index.php/admin/remove_user/<?php echo $r['id']; ?>">Delete</a></td>
  			</tr>
  			<?php
  		}
@@ -80,8 +80,8 @@
  				<td><?php echo $r['first_name']; ?></td>
  				<td><?php echo $r['last_name']; ?></td>
  				<td><?php echo $r['email']; ?></td>
- 				<td><a href="/book/index.php/admin/edit_user/<?php echo $r['id']; ?>">edit</a></td>
- 				<td><a href="/book/index.php/admin/delete_user/<?php echo $r['id']; ?>">edit</a></td>
+ 				<td><a href="/book/index.php/admin/edit_agent/<?php echo $r['id']; ?>">Edit</a></td>
+ 				<td><a href="/book/index.php/admin/remove_user/<?php echo $r['id']; ?>">Delete</a></td>
  			</tr>
  			<?php
  		}
