@@ -783,6 +783,117 @@ class Admin extends CI_Controller {
 		redirect('admin/manage_tax_codes', 'refresh');
 	}
 
+	function manage_underwriters()
+	{
+		// Get Data
+		$this->data = array('underwriters' => $this->admins->get_underwriters()
+					);
+		// Render Page
+		$this->_render_page('admin/manage_underwriters', $this->data);
+	}
+	
+	function add_underwriter()
+	{
+
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('name','Name', 'required');
+
+		if ($this->form_validation->run() == FALSE)
+		{
+			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+			
+			$this->data['name'] = array('name' => 'name',
+					'id' => 'name',
+					'type' => 'text',
+					'value' => $this->form_validation->set_value('name'),
+					'class' => 'form-control',
+					'placeholder' => 'Underwriter Company Name'
+				);
+
+			$this->data['description'] = array('name' => 'description',
+					'id' => 'description',
+					'type' => 'text',
+					'value' => $this->form_validation->set_value('description'),
+					'class' => 'form-control',
+					'placeholder' => 'Any notes or details'
+				);
+			
+
+
+			$this->_render_page('admin/add_underwriter', $this->data);
+		}
+		else
+		{
+			$data = array(
+				'name' => $this->input->post('name'),
+				'description' => $this->input->post('description')
+			);
+
+			$this->admins->add_underwriter($data);
+			//redirect them back to underwriters
+			redirect('admin/manage_underwriters', 'refresh');
+		}	
+		
+	}
+	
+	function edit_underwriter($id)
+	{
+		
+		if($underwriter = $this->admins->get_underwriter($id)){
+		
+			$this->load->library('form_validation');
+			$this->form_validation->set_rules('name','Name', 'required');
+	
+			if ($this->form_validation->run() == FALSE)
+			{
+				$this->data['underwriter'] = $underwriter;
+				$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+				
+				$this->data['name'] = array('name' => 'name',
+						'id' => 'name',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('name', $underwriter->name),
+						'class' => 'form-control',
+						'placeholder' => 'Name e.g. VAT'
+					);
+	
+				$this->data['description'] = array('name' => 'description',
+						'id' => 'description',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('description', $underwriter->description),
+						'class' => 'form-control',
+						'placeholder' => 'Any notes or details'
+					);
+				
+	
+	
+				$this->_render_page('admin/edit_underwriter', $this->data);
+			}
+			else
+			{
+				$data = array(
+					'name' => $this->input->post('name'),
+					'description' => $this->input->post('description')
+				);
+	
+				$this->admins->update_underwriter($id, $data);
+				//redirect them back to underwriters
+				redirect('admin/manage_underwriters', 'refresh');
+			}
+		}			
+	}
+
+	function remove_underwriter($id){
+
+		if($underwriter = $this->admins->get_underwriter($id)){
+			$this->admins->remove_underwriter($id);	
+		}		
+		
+		
+		redirect('admin/manage_underwriters', 'refresh');
+	}
+
+
 
 	function manage_categories()
 	{
@@ -925,9 +1036,7 @@ class Admin extends CI_Controller {
 	}
 
 	function remove_category($id){
-		$category = $this->admins->get_category($id);
-		
-		if($category){
+		if($category = $this->admins->get_category($id)){
 			$this->admins->remove_category($id);	
 		}		
 		
@@ -935,6 +1044,580 @@ class Admin extends CI_Controller {
 		redirect('admin/manage_categories', 'refresh');
 	}
 
+	function manage_travel_insurance_locations(){
+		
+		$this->data = array('travel_insurance_locations' => $this->admins->get_travel_insurance_locations(),
+						);
+			// Render Page
+			$this->_render_page('admin/manage_travel_insurance_locations', $this->data);
+			
+	}
+
+	function add_travel_insurance_location()
+	{
+
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('location','Location', 'required');
+
+		if ($this->form_validation->run() == FALSE)
+		{
+			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+			
+			$this->data['location'] = array('name' => 'location',
+					'id' => 'location',
+					'type' => 'text',
+					'value' => $this->form_validation->set_value('location'),
+					'class' => 'form-control',
+					'placeholder' => 'Location name e.g. United Kingdom'
+				);
+
+			$this->data['singleRate'] = array('name' => 'singleRate',
+					'id' => 'singleRate',
+					'type' => 'text',
+					'value' => $this->form_validation->set_value('singleRate'),
+					'class' => 'form-control',
+					'placeholder' => 'Rate for single trip'
+				);
+
+			$this->data['annualRate'] = array('name' => 'annualRate',
+					'id' => 'annualRate',
+					'type' => 'text',
+					'value' => $this->form_validation->set_value('annualRate'),
+					'class' => 'form-control',
+					'placeholder' => 'Rate for annual cover'
+				);			
+
+
+			$this->_render_page('admin/add_travel_insurance_location', $this->data);
+		}
+		else
+		{
+			$data = array(
+				'location' => $this->input->post('location'),
+				'singleRate' => $this->input->post('singleRate'),
+				'annualRate' => $this->input->post('annualRate')
+				
+			);
+
+			$this->admins->add_travel_insurance_location($data);
+			//redirect them back to taxcodes
+			redirect('admin/manage_travel_insurance_locations', 'refresh');
+		}	
+		
+	}
+	
+	function edit_travel_insurance_location($id)
+	{
+		$travel_insurance_location = $this->admins->get_travel_insurance_location($id);
+		
+		if($travel_insurance_location){
+		
+			$this->load->library('form_validation');
+			$this->form_validation->set_rules('location','Location', 'required');
+	
+			if ($this->form_validation->run() == FALSE)
+			{
+				$this->data['travel_insurance_location'] = $travel_insurance_location;
+				$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+				
+				$this->data['location'] = array('name' => 'location',
+						'id' => 'location',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('location', $travel_insurance_location->location),
+						'class' => 'form-control',
+						'placeholder' => 'Location name e.g. United Kingdom'
+					);
+	
+				$this->data['singleRate'] = array('name' => 'singleRate',
+						'id' => 'singleRate',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('singleRate', $travel_insurance_location->singleRate),
+						'class' => 'form-control',
+						'placeholder' => 'Rate for single trip'
+					);
+	
+				$this->data['annualRate'] = array('name' => 'annualRate',
+						'id' => 'annualRate',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('annualRate', $travel_insurance_location->annualRate),
+						'class' => 'form-control',
+						'placeholder' => 'Rate for annual cover'
+					);	
+		
+				$this->_render_page('admin/edit_travel_insurance_location', $this->data);
+			}
+			else
+			{
+				
+				$data = array(
+					'location' => $this->input->post('location'),
+					'singleRate' => $this->input->post('singleRate'),
+					'annualRate' => $this->input->post('annualRate')
+					
+				);
+				$this->admins->update_travel_insurance_location($id, $data);
+				//redirect them back to taxcodes
+				redirect('admin/manage_travel_insurance_locations', 'refresh');
+			}
+		}			
+	}
+
+	function remove_travel_insurance_location($id){
+		$travel_insurance_location = $this->admins->get_travel_insurance_location($id);
+		
+		if($travel_insurance_location){
+			$this->admins->remove_travel_insurance_location($id);	
+		}		
+		
+		
+		redirect('admin/manage_travel_insurance_locations', 'refresh');
+	}
+
+
+
+
+	function manage_policies($id){
+		if($category = $this->admins->get_category($id)){
+						$this->data = array(
+											'category' => $category,
+											'policies' => $this->admins->get_policies($id)
+						);
+			// Render Page
+			$this->_render_page('admin/manage_policies', $this->data);
+		}else{
+			redirect('admin/manage_categories');
+		}		
+	}
+
+
+	function add_policy($id)
+	{
+ 		if($category = $this->admins->get_category($id)){
+	 		$this->load->library('form_validation');
+			$this->form_validation->set_rules('pType','pType', 'required');
+			$this->form_validation->set_rules('policyType','Policy Type', 'required');
+			$this->form_validation->set_rules('policyTitle','Policy Title', 'required');
+			$this->form_validation->set_rules('policyDescription','Policy Description', 'required');
+	
+	
+			if ($this->form_validation->run() == FALSE)
+			{
+				$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+				$this->data['category'] = $category;
+				$this->data['agentID'] = array('name' => 'agentID',
+						'id' => 'agentID',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('agentID'),
+						'class' => 'form-control',
+						'placeholder' => 'AgentID'
+					);
+
+				$this->data['agentRef'] = array('name' => 'agentRef',
+						'id' => 'agentRef',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('agentRef'),
+						'class' => 'form-control',
+						'placeholder' => 'Agent Ref'
+					);
+				$this->data['pType'] = array('name' => 'pType',
+						'id' => 'pType',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('pType'),
+						'class' => 'form-control',
+						'placeholder' => 'pType'
+					);
+				$this->data['policyType'] = array('name' => 'policyType',
+						'id' => 'policyType',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('policyType'),
+						'class' => 'form-control',
+						'placeholder' => 'Policy Type'
+					);					
+				$this->data['policyTitle'] = array('name' => 'policyTitle',
+						'id' => 'policyTitle',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('policyTitle'),
+						'class' => 'form-control',
+						'placeholder' => 'Policy Title'
+					);
+				$this->data['policyDescription'] = array('name' => 'policyDescription',
+						'id' => 'policyDescription',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('policyDescription'),
+						'class' => 'form-control',
+						'placeholder' => 'Policy Description'
+					);
+				// Get Underwriters
+				$this->data['underwriterOptions'] = $this->admins->get_underwriters_form();
+				$this->data['underwriterID'] = $this->form_validation->set_value('underwriterID');
+				$dayNumOptions = array();
+				// Create Dropdown for number of days
+				$i = 1;
+				while($i <= 364){
+					$dayNumOptions[$i] = $i;
+					$i++;
+				}
+				$this->data['dayNumOptions'] = $dayNumOptions;
+				$this->data['dayNum'] = $this->form_validation->set_value('dayNum', 60);
+				$this->data['annualOptions'] = array('1' => 'TRUE', '0' => 'FALSE');
+				$this->data['annual'] = $this->form_validation->set_value('annual', 1);
+				$this->data['renewableOptions'] = array('1' => 'TRUE', '0' => 'FALSE');
+				$this->data['renewable'] = $this->form_validation->set_value('renewable', 1);	
+				$this->data['listOrder'] = array('name' => 'listOrder',
+						'id' => 'listOrder',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('listOrder'),
+						'class' => 'form-control',
+						'placeholder' => 'List Order 10 = High Priority 1 = Low Priority'
+					);			
+
+
+				//Insurance_add_Ons
+				$this->data['addOnName'] = array('name' => 'addOnName[0]',
+						'id' => 'addOnName',
+						'type' => 'text',
+						'class' => 'form-control input_nam',
+						'placeholder' => 'Name e.g. Wintersports Cover'
+					);				
+				$this->data['addOnDescription'] = array('name' => 'addOnDescription[0]',
+						'id' => 'addOnDescription',
+						'type' => 'text',
+						'class' => 'form-control input_desc',
+						'placeholder' => 'Name e.g. Wintersports Cover'
+					);					
+				$this->data['discountOptions'] = array_to_select($this->admins->get_discount_types(), 'id', 'type');
+				$this->data['discountParam'] = array('name' => 'discountParam[0]',
+						'id' => 'discountParam',
+						'type' => 'text',
+						'class' => 'form-control input_par',
+						'placeholder' => 'e.g. 10 for 10%, or 10 for add on or off £10'
+					);				
+
+		
+	
+				$this->_render_page('admin/add_policy', $this->data);
+			}
+			else
+			{
+				
+				$data = array(
+					'categoryID' => $id,
+					'agentID' => $this->input->post('agentID'),
+					'agentRef' => $this->input->post('agentRef'),
+					'pType' => $this->input->post('pType'),
+					'policyType' => $this->input->post('policyType'),
+					'policyTitle' => $this->input->post('policyTitle'),
+					'policyDescription' => $this->input->post('policyDescription'),
+					'underwriterID' => $this->input->post('underwriterID'),
+					'dayNum' => $this->input->post('dayNum'),
+					'annual' => $this->input->post('annual'),
+					'renewable' => $this->input->post('renewable'),
+					'listOrder' => $this->input->post('listOrder')
+					
+				);
+				
+				$policy = $this->admins->add_policy($data);
+				
+				if($this->input->post('addOnName')){
+					//Arrays of AddOns
+					$aoNam = $this->input->post('addOnName');
+					$aoDes = $this->input->post('addOnDescription');
+					$aoDis = $this->input->post('discountID');
+					$aoPar = $this->input->post('discountParam');
+					
+					$length = count($aoNam);
+					for($i = 0; $i < $length; $i++) {
+						if($aoNam[$i] != "" && is_numeric($aoPar[$i])){
+							$data = array(
+										'policyID' => $policy,
+										'addOnName' => $aoNam[$i],
+										'addOnDescription' => $aoDes[$i],
+										'discountID' => $aoDis[$i],
+										'discountParam' => $aoPar[$i]
+										);	
+							$this->admins->add_policy_addOns($data);
+						}
+					}
+					
+				}
+	
+				
+				//redirect them back to edit policy
+				redirect('admin/edit_policy/'.$policy, 'refresh');
+			}	
+
+		}
+		 		
+	}
+
+	
+	function edit_policy($id){
+		if($policy = $this->admins->get_policy($id)){
+	 		if($category = $this->admins->get_category($policy->id)){
+	 			
+				$addOns = $this->admins->get_policy_addons($id);
+				
+		 		$this->load->library('form_validation');
+				$this->form_validation->set_rules('pType','pType', 'required');
+				$this->form_validation->set_rules('policyType','Policy Type', 'required');
+				$this->form_validation->set_rules('policyTitle','Policy Title', 'required');
+				$this->form_validation->set_rules('policyDescription','Policy Description', 'required');
+		
+		
+				if ($this->form_validation->run() == FALSE)
+				{
+					$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+					$this->data['category'] = $category;
+					$this->data['policy'] = $policy;
+					$this->data['addOns'] = $addOns;
+					$this->data['agentID'] = array('name' => 'agentID',
+							'id' => 'agentID',
+							'type' => 'text',
+							'value' => $this->form_validation->set_value('agentID', $policy->agentID),
+							'class' => 'form-control',
+							'placeholder' => 'AgentID'
+						);
+	
+					$this->data['agentRef'] = array('name' => 'agentRef',
+							'id' => 'agentRef',
+							'type' => 'text',
+							'value' => $this->form_validation->set_value('agentRef', $policy->agentRef),
+							'class' => 'form-control',
+							'placeholder' => 'Agent Ref'
+						);
+					$this->data['pType'] = array('name' => 'pType',
+							'id' => 'pType',
+							'type' => 'text',
+							'value' => $this->form_validation->set_value('pType', $policy->pType),
+							'class' => 'form-control',
+							'placeholder' => 'pType'
+						);
+					$this->data['policyType'] = array('name' => 'policyType',
+							'id' => 'policyType',
+							'type' => 'text',
+							'value' => $this->form_validation->set_value('policyType', $policy->policyType),
+							'class' => 'form-control',
+							'placeholder' => 'Policy Type'
+						);					
+					$this->data['policyTitle'] = array('name' => 'policyTitle',
+							'id' => 'policyTitle',
+							'type' => 'text',
+							'value' => $this->form_validation->set_value('policyTitle', $policy->policyTitle),
+							'class' => 'form-control',
+							'placeholder' => 'Policy Title'
+						);
+					$this->data['policyDescription'] = array('name' => 'policyDescription',
+							'id' => 'policyDescription',
+							'type' => 'text',
+							'value' => $this->form_validation->set_value('policyDescription', $policy->policyDescription),
+							'class' => 'form-control',
+							'placeholder' => 'Policy Description'
+						);
+
+					
+
+	
+					// Get Underwriters
+					$this->data['underwriterOptions'] = $this->admins->get_underwriters_form();
+					$this->data['underwriterID'] = $this->form_validation->set_value('underwriterID', $policy->underwriterID);
+					$dayNumOptions = array();
+					// Create Dropdown for number of days
+					$i = 1;
+					while($i <= 364){
+						$dayNumOptions[$i] = $i;
+						$i++;
+					}
+					$this->data['dayNumOptions'] = $dayNumOptions;
+					$this->data['dayNum'] = $this->form_validation->set_value('dayNum', $policy->dayNum);
+					$this->data['annualOptions'] = array('1' => 'TRUE', '0' => 'FALSE');
+					$this->data['annual'] = $this->form_validation->set_value('annual', $policy->annual);
+					$this->data['renewableOptions'] = array('1' => 'TRUE', '0' => 'FALSE');
+					$this->data['renewable'] = $this->form_validation->set_value('renewable', $policy->renewable);	
+					$this->data['listOrder'] = array('name' => 'listOrder',
+							'id' => 'listOrder',
+							'type' => 'text',
+							'value' => $this->form_validation->set_value('listOrder', $policy->listOrder),
+							'class' => 'form-control',
+							'placeholder' => 'List Order 10 = High Priority 1 = Low Priority'
+						);			
+		
+		
+					$this->_render_page('admin/edit_policy', $this->data);
+				}
+				else
+				{
+					
+					$data = array(
+						'agentID' => $this->input->post('agentID'),
+						'agentRef' => $this->input->post('agentRef'),
+						'pType' => $this->input->post('pType'),
+						'policyType' => $this->input->post('policyType'),
+						'policyTitle' => $this->input->post('policyTitle'),
+						'policyDescription' => $this->input->post('policyDescription'),
+						'underwriterID' => $this->input->post('underwriterID'),
+						'dayNum' => $this->input->post('dayNum'),
+						'annual' => $this->input->post('annual'),
+						'renewable' => $this->input->post('renewable'),
+						'listOrder' => $this->input->post('listOrder')
+						
+					);
+		
+					$this->admins->update_policy($id, $data);
+					//redirect them back to taxcodes
+					redirect('admin/manage_policies/'.$policy->categoryID, 'refresh');
+				}	
+	
+			}
+		}
+		 
+	}
+
+	function add_policy_addon($id){
+		if($policy = $this->admins->get_policy($id)){
+			$this->form_validation->set_rules('addOnName','Add On Name', 'required');
+			$this->form_validation->set_rules('discountParam','Add On Value', 'required|numeric');
+		
+		
+			if ($this->form_validation->run() == FALSE)
+			{
+			
+				$this->data['policy'] = $policy;
+				$this->data['addOnName'] = array('name' => 'addOnName',
+						'id' => 'addOnName',
+						'type' => 'text',
+						'class' => 'form-control input_nam',
+						'placeholder' => 'Name e.g. Wintersports Cover'
+					);				
+				$this->data['addOnDescription'] = array('name' => 'addOnDescription',
+						'id' => 'addOnDescription',
+						'type' => 'text',
+						'class' => 'form-control input_desc',
+						'placeholder' => 'Name e.g. Wintersports Cover'
+					);					
+				$this->data['discountOptions'] = array_to_select($this->admins->get_discount_types(), 'id', 'type');
+				$this->data['discountParam'] = array('name' => 'discountParam',
+						'id' => 'discountParam',
+						'type' => 'text',
+						'class' => 'form-control input_par',
+						'placeholder' => 'e.g. 10 for 10%, or 10 for add on or off £10'
+					);
+					
+				$this->_render_page('admin/add_policy_addon', $this->data);
+			}else{
+				
+				$data = array(
+								'policyID' => $id,
+								'addOnName' => $this->input->post('addOnName'),
+								'addOnDescription' => $this->input->post('addOnDescription'),
+								'discountID' => $this->input->post('discountID'),
+								'discountParam' => $this->input->post('discountParam')
+							);
+							
+				$this->admins->add_policy_addon($data);
+				redirect('admin/edit_policy/'.$id);
+				
+			}
+			
+			
+		}else{
+			redirect('admin/manage_categories/');
+		}		
+		
+	}
+
+	function edit_policy_addon($id){
+		if($policyAddon = $this->admins->get_policy_addon($id)){
+			$this->form_validation->set_rules('addOnName','Add On Name', 'required');
+			$this->form_validation->set_rules('discountParam','Add On Value', 'required|numeric');
+		
+		
+			if ($this->form_validation->run() == FALSE)
+			{
+				$this->data['policyAddon'] = $policyAddon;
+				$this->data['policy'] = $this->admins->get_policy($policyAddon->policyID);
+				$this->data['addOnName'] = array('name' => 'addOnName',
+						'id' => 'addOnName',
+						'type' => 'text',
+						'class' => 'form-control input_nam',
+						'value' => $this->form_validation->set_value('addOnName', $policyAddon->addOnName),
+						'placeholder' => 'Name e.g. Wintersports Cover'
+					);				
+				$this->data['addOnDescription'] = array('name' => 'addOnDescription',
+						'id' => 'addOnDescription',
+						'type' => 'text',
+						'value' => $this->form_validation->set_value('addOnName', $policyAddon->addOnDescription),
+						'class' => 'form-control input_desc',
+						'placeholder' => 'Name e.g. Wintersports Cover'
+					);					
+				$this->data['discountOptions'] = array_to_select($this->admins->get_discount_types(), 'id', 'type');
+				$this->data['discountID'] = $this->form_validation->set_value('discountID', $policyAddon->discountID);
+				$this->data['discountParam'] = array('name' => 'discountParam',
+						'id' => 'discountParam',
+						'type' => 'text',
+						'class' => 'form-control input_par',
+						'value' => $this->form_validation->set_value('discountParam', $policyAddon->discountParam),
+						'placeholder' => 'e.g. 10 for 10%, or 10 for add on or off £10'
+					);
+					
+				$this->_render_page('admin/edit_policy_addon', $this->data);	
+			}else{
+				
+				$data = array(	
+								'addOnName' => $this->input->post('addOnName'),
+								'discountID' => $this->input->post('discountID'),
+								'discountParam' => $this->input->post('discountParam')
+							);
+							
+				$this->admins->edit_policy_addon($id, $data);
+				redirect('admin/edit_policy/'.$policyAddon->policyID);
+				
+			}
+			
+			
+		}else{
+			redirect('admin/manage_categories/');
+		}		
+		
+	}
+
+	function remove_policy_addon($id){
+		
+		if($policyAddon = $this->admins->get_policy_addon($id)){
+			$this->admins->remove_policy_addon($id);	
+			redirect('admin/edit_policy/'.$policyAddon->policyID, 'refresh');	
+		}else{		
+			redirect('admin/manage_categories', 'refresh');
+		}
+	}
+
+
+	function manage_products($filter = false){
+			$products = $this->get_products($filter);
+					$this->data = array('categories' => $this->admins->get_categories()
+					);
+		// Render Page
+		$this->_render_page('admin/manage_categories', $this->data);
+	}
+	
+	function add_product(){
+		
+	}
+	
+	function edit_product(){
+		
+	}
+	
+	function manage_product_policy_info(){
+		
+	}
+	
+	function manage_product_add_ons(){
+		
+	}
+	
+	function remove_product(){
+		
+	}
 
 	function _render_page($view, $data=null, $render=false)
 	{

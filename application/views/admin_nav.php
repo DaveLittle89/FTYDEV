@@ -18,13 +18,15 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Manage <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="/book/index.php/admin/manage_categories">Categories</a></li>
-            <li><a href="#">Products</a></li>
+            <li><a href="/book/index.php/admin/manage_categories">Polices</a></li>
+            <li><a href="#">Retail Items</a></li>
             <li class="divider"></li>
             <li><a href="/book/index.php/admin/manage_users">Users</a></li>
             <li><a href="/book/index.php/admin/manage_agents">Agents</a></li>            
             <li class="divider"></li>
             <li><a href="/book/index.php/admin/manage_tax_codes">Tax Rates</a></li>
+            <li class="divider"></li>
+            <li><a href="/book/index.php/admin/manage_underwriters">Underwriters</a></li>
             <li class="divider"></li>
             <li><a href="#">Promo Codes</a></li>
           </ul>

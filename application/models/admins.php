@@ -58,6 +58,7 @@ class Admins extends CI_Model
 	function add_category($data){
 		$this->db->insert('categories', $data); 
 	}
+
 	
 	function update_category($id, $data){
 		$this->db->where('id', $id);
@@ -69,9 +70,142 @@ class Admins extends CI_Model
 		$this->db->update('categories', array('active' => '0')); 
 	}
 	
+	function get_policies(){
+		$this->db->from('policies');
+		$this->db->where('active', '1');
+		$query = $this->db->get(); 
+		return $query->result_array();			
+	}
+
+	function get_policy($id){
+		$this->db->from('policies');
+		$this->db->where('active', '1');
+		$this->db->where('id', $id);
+		$query = $this->db->get(); 
+		return $query->row();			
+	}
+
+	function add_policy($data){
+		$this->db->insert('policies', $data); 
+		return $this->db->insert_id();
+	}		
+
+	function update_policy($id, $data){
+		$this->db->where('id', $id);
+		$this->db->update('policies', $data); 
+	}
+	
+	function get_policy_addOns($id){
+		$this->db->select("policy_addons.*, discount_type.type");
+		$this->db->from('policy_addons');
+		$this->db->where('policyID', $id);
+		$this->db->where('active', 1);
+		$this->db->join('discount_type', 'discount_type.id = policy_addons.discountID');
+		$query = $this->db->get(); 
+		return $query->result_array();			
+	}
+	
+	function get_policy_addon($id){
+		$this->db->from('policy_addons');
+		$this->db->where('active', '1');
+		$this->db->where('id', $id);
+		$query = $this->db->get(); 
+		return $query->row();			
+	}
+	
+	
+	function add_policy_addon($data){
+		$this->db->insert('policy_addons', $data); 
+	}
+	
+	function edit_policy_addon($id, $data){
+		$this->db->where('id', $id);
+		$this->db->update('policy_addons', $data); 		
+	}
+	
+	function remove_policy_addOns($data){
+		$this->db->where('id', $id);
+		$this->db->update('policy_addons', array('active' => '0')); 		
+	}
+		
+			
+	
+	function get_underwriters(){
+		$this->db->from('underwriters');
+		$this->db->where('active', '1');
+		$query = $this->db->get(); 
+		return $query->result_array();			
+	}
+	
+	function get_underwriters_form(){
+		$this->db->select('id, name');
+		$this->db->from('underwriters');
+		$this->db->where('active', '1');
+		$query = $this->db->get(); 
+        foreach($query->result_array() as $row){
+            $data[$row['id']]=$row['name'];
+        }
+        return $data;			
+	}
+	
+	function get_underwriter($id)
+	{
+		$this->db->from('underwriters');
+		$this->db->where('id', $id);
+		$this->db->where('active', '1');
+		$query = $this->db->get(); 
+		return $query->row();		
+	}
+	
+	function add_underwriter($data){
+		$this->db->insert('underwriters', $data); 
+	}	
+	
+	function update_underwriter($id, $data){
+		$this->db->where('id', $id);
+		$this->db->update('underwriters', $data); 		
+	}
+
+	function remove_underwriter($id){
+		$this->db->where('id', $id);
+		$this->db->update('underwriters', array('active' => '0')); 
+	}
+	
+	
+	
+	
+	function get_travel_insurance_locations(){
+		$this->db->from('travel_insurance_locations');
+		$this->db->where('active', '1');
+		$query = $this->db->get(); 
+		return $query->result_array();			
+	}
+
+	function get_travel_insurance_location($id){
+		$this->db->from('travel_insurance_locations');
+		$this->db->where('id', $id);
+		$this->db->where('active', '1');
+		$query = $this->db->get(); 
+		return $query->row();
+	}
+	
+	
+	function add_travel_insurance_location($data){
+		$this->db->insert('travel_insurance_locations', $data); 
+	}	
+	
+	function update_travel_insurance_location($id, $data){
+		$this->db->where('id', $id);
+		$this->db->update('travel_insurance_locations', $data); 		
+	}
+
+	function remove_travel_insurance_location($id){
+		$this->db->where('id', $id);
+		$this->db->update('travel_insurance_locations', array('active' => '0')); 
+	}
 	
 	function add_product($data){
-		$this->db->insert('categories', $data); 
+		$this->db->insert('items', $data); 
 	}	
 
 	function update_user($userID, $userTabledata, $userDataData=false){
@@ -124,5 +258,10 @@ class Admins extends CI_Model
 		$this->db->update('tax_codes', array('active' => '0')); 
 	}
 	
+	function get_discount_types(){
+		$this->db->from('discount_type');
+		$query = $this->db->get(); 
+		return $query->result_array();
+	}
 	
 }
